@@ -3,6 +3,6 @@ requires = ["setuptools", "pybind11"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "simple_project_dkokov"
-version = "0.1.1"
+name = "simple-project-dkokov"
+version = "0.1.2"
 description = "C++ Hello World for Python"

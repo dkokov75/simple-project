@@ -27,8 +27,6 @@ jobs:
   upload_test_pypi:
     needs: [build_wheels]
     runs-on: ubuntu-latest
-    #environment:
-    #  name: pypi
     permissions:
       id-token: write
 
