@@ -1,0 +1,56 @@
+name: Multi-OS Build and Test
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build and Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Compile (Linux/macOS)
+        if: matrix.os != 'windows-latest'
+        run: g++ hello.cpp -o hello
+
+      - name: Compile (Windows)
+        if: matrix.os == 'windows-latest'
+        run: g++ hello.cpp -o hello.exe
+
+      - name: Run Test (Linux/macOS)
+        if: matrix.os != 'windows-latest'
+        run: |
+          OUTPUT=$(./hello)
+          echo "Program output: $OUTPUT"
+          if [ "$OUTPUT" == "Hello, GitHub Actions 2026!" ]; then
+            echo "Test Passed!"
+          else
+            echo "Test Failed!"
+            exit 1
+          fi
+
+      - name: Run Test (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          $output = .\hello.exe
+          Write-Host "Program output: $output"
+          if ($output -eq "Hello, GitHub Actions 2026!") {
+            Write-Host "Test Passed!"
+          } else {
+            Write-Host "Test Failed!"
+            exit 1
+          }
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: binary-${{ matrix.os }}
+          path: |
+            hello
+            hello.exe
